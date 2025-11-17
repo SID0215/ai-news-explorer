@@ -1,6 +1,5 @@
 import os
 import re
-import json
 from datetime import date, datetime, timedelta
 
 import streamlit as st
@@ -77,6 +76,10 @@ def parse_news_markdown_grouped(markdown_text: str):
                 continue
             seen_urls.add(url)
 
+            # Avoid cases where summary is just the URL again
+            if summary.startswith("http://") or summary.startswith("https://"):
+                summary = "No summary available. Open the full story to read more."
+
             current_articles.append(
                 {
                     "title": title,
@@ -111,6 +114,9 @@ def parse_news_markdown_grouped(markdown_text: str):
             if url in seen_urls:
                 continue
             seen_urls.add(url)
+
+            if summary.startswith("http://") or summary.startswith("https://"):
+                summary = "No summary available. Open the full story to read more."
 
             flat_articles.append(
                 {"title": title, "summary": summary, "url": url}
@@ -219,24 +225,28 @@ def filter_sections_by_selected_date(sections, timeframe: str):
     Keep only sections whose date falls within the selected date range:
 
     - Today: that exact date
-    - Weekly: selected_date - 6 days  → selected_date  (7-day window)
-    - Monthly: selected_date - 29 days → selected_date (30-day window)
+    - Weekly: Monday–Sunday week containing selected date
+    - Monthly: whole calendar month of selected date
     """
     selected = _get_selected_date()
     if not selected:
-        selected = date.today()
+        return sections
 
     tf = timeframe.lower()
     if tf.startswith("today"):
         start = end = selected
     elif tf.startswith("week"):
-        # Last 7 days ending at selected date
-        end = selected
-        start = selected - timedelta(days=6)
+        # Monday–Sunday week
+        start = selected - timedelta(days=selected.weekday())
+        end = start + timedelta(days=6)
     elif tf.startswith("month"):
-        # Last 30 days ending at selected date
-        end = selected
-        start = selected - timedelta(days=29)
+        start = selected.replace(day=1)
+        if selected.month == 12:
+            end = selected.replace(year=selected.year + 1, month=1, day=1) - timedelta(
+                days=1
+            )
+        else:
+            end = selected.replace(month=selected.month + 1, day=1) - timedelta(days=1)
     else:
         return sections
 
@@ -268,24 +278,26 @@ def render_article_grid(articles, news_type: str):
     """
     Render a responsive grid of tiles for all articles of a single date.
     Each tile:
+        - category tag
         - image or video thumbnail
         - title
         - 60–150 word summary
         - "Read full story →" link
     """
     fallback_img = _get_fallback_image(news_type)
+    cat_label = news_type.capitalize()
 
     st.markdown(
-        """
+        f"""
         <style>
-        .news-grid {
+        .news-grid {{
             display: grid;
             grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
             gap: 1.5rem;
             margin-top: 1.0rem;
             margin-bottom: 1.8rem;
-        }
-        .news-card {
+        }}
+        .news-card {{
             background: #ffffff;
             border-radius: 20px;
             padding: 1.2rem 1.3rem;
@@ -294,40 +306,54 @@ def render_article_grid(articles, news_type: str):
             display: flex;
             flex-direction: column;
             height: 100%;
-        }
-        .news-card:hover {
+            position: relative;
+        }}
+        .news-card:hover {{
             transform: translateY(-4px);
             box-shadow: 0 20px 40px rgba(15, 23, 42, 0.18);
-        }
-        .news-media {
+        }}
+        .news-media {{
             width: 100%;
             height: 170px;
             border-radius: 16px;
             object-fit: cover;
             margin-bottom: 0.9rem;
-        }
-        .news-title {
+        }}
+        .news-title {{
             font-size: 1.0rem;
             font-weight: 700;
             color: #111827;
             margin-bottom: 0.4rem;
-        }
-        .news-summary {
+        }}
+        .news-summary {{
             font-size: 0.9rem;
             color: #4b5563;
             line-height: 1.4;
             margin-bottom: 0.7rem;
-        }
-        .news-link {
+        }}
+        .news-link {{
             margin-top: auto;
             font-size: 0.9rem;
             font-weight: 600;
             color: #2563eb;
             text-decoration: none;
-        }
-        .news-link:hover {
+        }}
+        .news-link:hover {{
             text-decoration: underline;
-        }
+        }}
+        .news-tag {{
+            position: absolute;
+            top: 0.9rem;
+            left: 0.9rem;
+            background: #1f2937;
+            color: #f9fafb;
+            font-size: 0.7rem;
+            padding: 0.2rem 0.6rem;
+            border-radius: 999px;
+            text-transform: uppercase;
+            letter-spacing: 0.05em;
+            opacity: 0.9;
+        }}
         </style>
         """,
         unsafe_allow_html=True,
@@ -363,6 +389,7 @@ def render_article_grid(articles, news_type: str):
 
         card = f"""
         <div class="news-card">
+            <div class="news-tag">{cat_label}</div>
             {media_html}
             <div class="news-title">{title}</div>
             <div class="news-summary">{summary}</div>
@@ -403,16 +430,15 @@ def render_news_sections(sections, news_type: str, timeframe: str):
     selected = _get_selected_date()
     if selected:
         if timeframe.lower().startswith("week"):
-            start = selected - timedelta(days=6)
-            end = selected
-            st.caption(f"Week from {start.isoformat()} to {end.isoformat()}")
+            week_start = selected - timedelta(days=selected.weekday())
+            week_end = week_start + timedelta(days=6)
+            st.caption(f"Week of {week_start.isoformat()} to {week_end.isoformat()}")
         elif timeframe.lower().startswith("month"):
-            start = selected - timedelta(days=29)
-            end = selected
-            st.caption(f"{start.isoformat()} to {end.isoformat()}")
+            st.caption(selected.strftime("%B %Y"))
         else:
             st.caption(selected.isoformat())
     else:
+        # Fallback: today
         st.caption(date.today().isoformat())
 
     st.write(f"**Selected News Type:** {news_type.capitalize()}")
@@ -473,23 +499,34 @@ class DisplayResultStreamlit:
             state = State(messages=st.session_state["messages"])
             print("THREAD ID USED:", self.thread_id)
 
-            for event in graph.stream(
-                state,
-                config={"configurable": {"thread_id": self.thread_id}},
-            ):
-                for value in event.values():
-                    for msg in value.get("messages", []):
-                        if isinstance(msg, AIMessage):
-                            st.session_state["messages"].append(msg)
-                            with st.chat_message("assistant"):
-                                st.write(msg.content)
+            try:
+                for event in graph.stream(
+                    state,
+                    config={"configurable": {"thread_id": self.thread_id}},
+                ):
+                    for value in event.values():
+                        for msg in value.get("messages", []):
+                            if isinstance(msg, AIMessage):
+                                st.session_state["messages"].append(msg)
+                                with st.chat_message("assistant"):
+                                    st.write(msg.content)
+            except Exception as e:
+                st.error(
+                    f"Chatbot failed to respond. This is usually due to the LLM API key being restricted or invalid. Raw error: {e}"
+                )
 
         # --------------------------------------------------------------
         # 2) CHATBOT WITH TAVILY SEARCH
         # --------------------------------------------------------------
         elif usecase == "Chatbot with tavily search":
             initial_state = {"messages": [HumanMessage(content=user_message)]}
-            res = graph.invoke(initial_state)
+            try:
+                res = graph.invoke(initial_state)
+            except Exception as e:
+                st.error(
+                    f"Chatbot with search failed. Likely due to a restricted/invalid LLM API key. Raw error: {e}"
+                )
+                return
 
             for message in res.get("messages", []):
                 if isinstance(message, HumanMessage):
@@ -522,35 +559,23 @@ class DisplayResultStreamlit:
             )
             timeframe = timeframe_raw.strip().capitalize()
 
-            selected = _get_selected_date()
-
-            # Build JSON payload for the graph so NewsNode can see timeframe + date
-            payload = {
-                "timeframe": timeframe.lower(),
-                "selected_date": selected.isoformat() if selected else None,
-            }
-
             with st.spinner("Fetching and summarizing news... ⏳"):
+                # Ask the graph to build/update the summary file.
                 try:
                     _ = graph.invoke(
                         {
                             "messages": [
                                 {
                                     "role": "user",
-                                    "content": json.dumps(payload),
+                                    "content": timeframe.lower(),
                                 }
                             ]
                         }
                     )
                 except Exception as e:
-                    # Do NOT show the raw 400 / organization_restricted payload to the user.
-                    # Just log it in the backend and keep going with whatever summaries exist.
-                    print("[UI] Graph invocation failed, using cached summaries if any:", repr(e))
                     st.warning(
-                        "Could not refresh news with the AI summariser right now. "
-                        "Showing any cached summaries if available."
+                        f"Graph invocation failed, using cached summaries if any. ({e})"
                     )
-
 
                 # Load summary file based on timeframe
                 filename = f"{timeframe.lower()}_summary.md".replace("today", "daily")

@@ -13,7 +13,8 @@ TAVILY_API_KEY = os.getenv("TAVILY_API_KEY")
 GROQ_API_KEY = os.getenv("GROQ_API_KEY")
 NEWS_DATA_API_KEY = os.getenv("NEWS_DATA_API_KEY")
 GUARDIAN_API_KEY = os.getenv("GUARDIAN_API_KEY")
-ENABLE_GDELT=os.getenv("ENABLE_GDELT")
+ENABLE_GDELT = os.getenv("ENABLE_GDELT")
+
 
 class LoadStreamLitUI:
     def __init__(self):
@@ -61,7 +62,6 @@ class LoadStreamLitUI:
                     if not self.user_controls["other_model"]:
                         st.warning("Please enter your custom model name to proceed.")
 
-                # expose key for graph builder
                 self.user_controls["GROQ_API_KEY"] = GROQ_API_KEY
 
             # ---- Usecase selection ----
@@ -70,7 +70,6 @@ class LoadStreamLitUI:
             )
 
             # ----------------- NEWS CONTROLS -----------------
-            # we keep NEWS_TYPE in session so other modules can read it
             if self.user_controls["USE_CASE_OPTIONS"] != "Chatbot with tavily search":
                 st.markdown("### 📰 Choose News Type")
 
@@ -85,16 +84,34 @@ class LoadStreamLitUI:
                     f"Selected News Type: **{self.user_controls['NEWS_TYPE'].capitalize()}**"
                 )
 
-            # Only set Tavily key when in News mode
-            if self.user_controls["USE_CASE_OPTIONS"] == "News":
-                os.environ["TAVILY_API_KEY"] = TAVILY_API_KEY
-                self.user_controls["TAVILY_API_KEY"] = TAVILY_API_KEY
+            # If radio was hidden (chatbot usecase), ensure we still have a NEWS_TYPE
+            if "NEWS_TYPE" not in self.user_controls:
+                self.user_controls["NEWS_TYPE"] = st.session_state.get(
+                    "NEWS_TYPE", "news"
+                )
+
+            # Set Tavily key for anything that needs web search
+            if self.user_controls["USE_CASE_OPTIONS"] in (
+                "News",
+                "Chatbot with tavily search",
+            ):
+                if TAVILY_API_KEY:
+                    os.environ["TAVILY_API_KEY"] = TAVILY_API_KEY
+                    self.user_controls["TAVILY_API_KEY"] = TAVILY_API_KEY
+                else:
+                    st.warning(
+                        "TAVILY_API_KEY is not set in .env; web search may not work."
+                    )
+
+            # You can also expose other API keys if needed
+            self.user_controls["NEWS_DATA_API_KEY"] = NEWS_DATA_API_KEY
+            self.user_controls["GUARDIAN_API_KEY"] = GUARDIAN_API_KEY
+            self.user_controls["ENABLE_GDELT"] = ENABLE_GDELT
 
             # ---- News Explorer (time frame + date) ----
             if self.user_controls["USE_CASE_OPTIONS"] == "News":
                 st.subheader("News Explorer")
 
-                # Time frame selector (Today / Weekly / Monthly)
                 time_frame_label = st.selectbox(
                     "Select Time Frame", ["Today", "Weekly", "Monthly"], index=0
                 )
@@ -104,7 +121,6 @@ class LoadStreamLitUI:
                 st.session_state["timeframe_label"] = time_frame_label
                 self.user_controls["TIMEFRAME"] = tf_value
 
-                # Optional date picker; user cannot select beyond today
                 today = date.today()
                 default_date = st.session_state.get("selected_date", today)
                 selected_date = st.date_input(
@@ -114,7 +130,6 @@ class LoadStreamLitUI:
                 )
                 st.session_state["selected_date"] = selected_date
 
-                # Fetch button
                 if st.button("Fetch Latest News", use_container_width=True):
                     st.session_state["IsFetchButtonClicked"] = True
 
