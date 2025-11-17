@@ -1,5 +1,6 @@
 import os
 import re
+import json
 from datetime import date, datetime, timedelta
 
 import streamlit as st
@@ -71,14 +72,12 @@ def parse_news_markdown_grouped(markdown_text: str):
             summary = m.group(2).strip()
             url = m.group(3).strip()
 
-            # Remove duplicates across the whole file by URL
-            if url in seen_urls:
-                continue
-            seen_urls.add(url)
+            norm_url = url.split("?", 1)[0].strip()
 
-            # Avoid cases where summary is just the URL again
-            if summary.startswith("http://") or summary.startswith("https://"):
-                summary = "No summary available. Open the full story to read more."
+            # Remove duplicates across the whole file by URL
+            if norm_url in seen_urls:
+                continue
+            seen_urls.add(norm_url)
 
             current_articles.append(
                 {
@@ -111,12 +110,10 @@ def parse_news_markdown_grouped(markdown_text: str):
             summary = m.group(2).strip()
             url = m.group(3).strip()
 
-            if url in seen_urls:
+            norm_url = url.split("?", 1)[0].strip()
+            if norm_url in seen_urls:
                 continue
-            seen_urls.add(url)
-
-            if summary.startswith("http://") or summary.startswith("https://"):
-                summary = "No summary available. Open the full story to read more."
+            seen_urls.add(norm_url)
 
             flat_articles.append(
                 {"title": title, "summary": summary, "url": url}
@@ -261,7 +258,7 @@ def filter_sections_by_selected_date(sections, timeframe: str):
             filtered.append(section)
             continue
 
-        # Clamp any future dates (API sometimes returns +1 day because of TZ)
+        # Clamp any future dates
         if sec_date > today:
             continue
 
@@ -278,26 +275,26 @@ def render_article_grid(articles, news_type: str):
     """
     Render a responsive grid of tiles for all articles of a single date.
     Each tile:
-        - category tag
+        - category tag (Movies / Sports / Tech / etc.)
         - image or video thumbnail
         - title
         - 60–150 word summary
         - "Read full story →" link
     """
     fallback_img = _get_fallback_image(news_type)
-    cat_label = news_type.capitalize()
+    tag_label = news_type.capitalize()
 
     st.markdown(
-        f"""
+        """
         <style>
-        .news-grid {{
+        .news-grid {
             display: grid;
             grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
             gap: 1.5rem;
             margin-top: 1.0rem;
             margin-bottom: 1.8rem;
-        }}
-        .news-card {{
+        }
+        .news-card {
             background: #ffffff;
             border-radius: 20px;
             padding: 1.2rem 1.3rem;
@@ -306,54 +303,52 @@ def render_article_grid(articles, news_type: str):
             display: flex;
             flex-direction: column;
             height: 100%;
-            position: relative;
-        }}
-        .news-card:hover {{
+        }
+        .news-card:hover {
             transform: translateY(-4px);
             box-shadow: 0 20px 40px rgba(15, 23, 42, 0.18);
-        }}
-        .news-media {{
+        }
+        .news-tag {
+            display: inline-block;
+            padding: 0.10rem 0.55rem;
+            border-radius: 999px;
+            font-size: 0.70rem;
+            font-weight: 600;
+            letter-spacing: 0.04em;
+            background: #eff6ff;
+            color: #1d4ed8;
+            margin-bottom: 0.35rem;
+            text-transform: uppercase;
+        }
+        .news-media {
             width: 100%;
             height: 170px;
             border-radius: 16px;
             object-fit: cover;
             margin-bottom: 0.9rem;
-        }}
-        .news-title {{
+        }
+        .news-title {
             font-size: 1.0rem;
             font-weight: 700;
             color: #111827;
             margin-bottom: 0.4rem;
-        }}
-        .news-summary {{
+        }
+        .news-summary {
             font-size: 0.9rem;
             color: #4b5563;
             line-height: 1.4;
             margin-bottom: 0.7rem;
-        }}
-        .news-link {{
+        }
+        .news-link {
             margin-top: auto;
             font-size: 0.9rem;
             font-weight: 600;
             color: #2563eb;
             text-decoration: none;
-        }}
-        .news-link:hover {{
+        }
+        .news-link:hover {
             text-decoration: underline;
-        }}
-        .news-tag {{
-            position: absolute;
-            top: 0.9rem;
-            left: 0.9rem;
-            background: #1f2937;
-            color: #f9fafb;
-            font-size: 0.7rem;
-            padding: 0.2rem 0.6rem;
-            border-radius: 999px;
-            text-transform: uppercase;
-            letter-spacing: 0.05em;
-            opacity: 0.9;
-        }}
+        }
         </style>
         """,
         unsafe_allow_html=True,
@@ -389,7 +384,7 @@ def render_article_grid(articles, news_type: str):
 
         card = f"""
         <div class="news-card">
-            <div class="news-tag">{cat_label}</div>
+            <div class="news-tag">{tag_label}</div>
             {media_html}
             <div class="news-title">{title}</div>
             <div class="news-summary">{summary}</div>
@@ -410,10 +405,7 @@ def render_article_grid(articles, news_type: str):
 # -------------------------------------------------------------------
 def render_news_sections(sections, news_type: str, timeframe: str):
     """
-    Render the full news view:
-      - Dynamic heading (Today / Weekly / Monthly)
-      - Date / week / month label based on selected date
-      - For each day: subheading + grid of tiles
+    Render the full news view.
     """
     tf = timeframe.capitalize()
     label = st.session_state.get("timeframe_label", tf)
@@ -491,42 +483,42 @@ class DisplayResultStreamlit:
                 with st.chat_message(role):
                     st.write(msg.content)
 
-            user_msg = HumanMessage(content=user_message)
-            st.session_state["messages"].append(user_msg)
-            with st.chat_message("user"):
-                st.write(user_message)
+            if user_message:
+                user_msg = HumanMessage(content=user_message)
+                st.session_state["messages"].append(user_msg)
+                with st.chat_message("user"):
+                    st.write(user_message)
 
-            state = State(messages=st.session_state["messages"])
-            print("THREAD ID USED:", self.thread_id)
+                state = State(messages=st.session_state["messages"])
+                print("THREAD ID USED:", self.thread_id)
 
-            try:
-                for event in graph.stream(
-                    state,
-                    config={"configurable": {"thread_id": self.thread_id}},
-                ):
-                    for value in event.values():
-                        for msg in value.get("messages", []):
-                            if isinstance(msg, AIMessage):
-                                st.session_state["messages"].append(msg)
-                                with st.chat_message("assistant"):
-                                    st.write(msg.content)
-            except Exception as e:
-                st.error(
-                    f"Chatbot failed to respond. This is usually due to the LLM API key being restricted or invalid. Raw error: {e}"
-                )
+                try:
+                    for event in graph.stream(
+                        state,
+                        config={"configurable": {"thread_id": self.thread_id}},
+                    ):
+                        for value in event.values():
+                            for msg in value.get("messages", []):
+                                if isinstance(msg, AIMessage):
+                                    st.session_state["messages"].append(msg)
+                                    with st.chat_message("assistant"):
+                                        st.write(msg.content)
+                except Exception as e:
+                    st.error(
+                        "The chatbot backend returned an authentication error.\n\n"
+                        "This usually means the OpenAI / Groq API key or organisation "
+                        "in your server is restricted or invalid. "
+                        "Please update the key or organisation in your environment "
+                        "and restart the app.\n\n"
+                        f"Full error: {e}"
+                    )
 
         # --------------------------------------------------------------
         # 2) CHATBOT WITH TAVILY SEARCH
         # --------------------------------------------------------------
         elif usecase == "Chatbot with tavily search":
             initial_state = {"messages": [HumanMessage(content=user_message)]}
-            try:
-                res = graph.invoke(initial_state)
-            except Exception as e:
-                st.error(
-                    f"Chatbot with search failed. Likely due to a restricted/invalid LLM API key. Raw error: {e}"
-                )
-                return
+            res = graph.invoke(initial_state)
 
             for message in res.get("messages", []):
                 if isinstance(message, HumanMessage):
@@ -559,22 +551,31 @@ class DisplayResultStreamlit:
             )
             timeframe = timeframe_raw.strip().capitalize()
 
+            # Build JSON payload with timeframe + selected_date
+            selected = st.session_state.get("selected_date")
+            selected_iso = (
+                selected.isoformat() if isinstance(selected, date) else None
+            )
+            payload = {"timeframe": timeframe.lower()}
+            if selected_iso:
+                payload["selected_date"] = selected_iso
+
             with st.spinner("Fetching and summarizing news... ⏳"):
-                # Ask the graph to build/update the summary file.
                 try:
                     _ = graph.invoke(
                         {
                             "messages": [
                                 {
                                     "role": "user",
-                                    "content": timeframe.lower(),
+                                    "content": json.dumps(payload),
                                 }
                             ]
                         }
                     )
                 except Exception as e:
                     st.warning(
-                        f"Graph invocation failed, using cached summaries if any. ({e})"
+                        "Graph invocation failed, using cached summaries if any.\n\n"
+                        f"Details: {e}"
                     )
 
                 # Load summary file based on timeframe
