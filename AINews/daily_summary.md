@@ -1,0 +1,18 @@
+# Daily AI News Summary
+
+### 2025-11-07
+- OpenAI's CFO Sarah Friar said the company is exploring federal loan guarantees to attract broader funding for its AI computing expansion, describing a potential “ecosystem of banks, private equity, maybe even governmental” participants. [OpenAI asks U.S. for loan guarantees to fund $1 trillion AI expansion](https://investinglive.com/stock-market-update/icymi-openai-asks-us-for-loan-guarantees-to-fund-1-trillion-ai-expansion-20251105/)
+- Some investors see buying opportunities following this week's dip, while others advocate looking beyond U.S. in order to avoid concentration risk in AI-related names. [AI valuation fears grip investors as tech bubble concerns heighten](https://www.cnbc.com/2025/11/07/ai-valuation-fears-grip-investors-as-tech-bubble-concerns-heighten.html)
+- Taiwan's exports grew at their fastest clip in nearly 16 years in October, setting a record as booming demand for chips and artificial intelligence (AI) technology outpaces the effects of U.S. tariffs on the island's goods. [Taiwan October exports log biggest growth in nearly 16 years on strong AI demand](https://www.reuters.com/world/asia-pacific/taiwan-october-exports-log-biggest-growth-nearly-16-years-strong-ai-demand-2025-11-07/)
+- Tech-heavy stock markets were heading for their biggest weekly falls in seven months on Friday, as investors turned uneasy about how far the rally in artificial intelligence stocks has run. [Global markets: Global markets](https://www.reuters.com/world/china/global-markets-global-markets-2025-11-07/)
+- Rapido is in discussions with both Accel and Prosus for a new funding round expected to close next year. [Accel and Prosus increase investments in Indian ride-hailing platform Rapido](https://www.startupecosystem.ca/news/accel-and-prosus-increase-investments-in-indian-ride-hailing-platform-rapido/)
+- Tala Health, a healthcare-focused artificial intelligence company, has launched with $100 million in funding. [Top digital health funding: Tala Health, Hippocratic AI, Synchron](https://www.modernhealthcare.com/health-tech/ai/mh-digital-health-funding-tala-health-hippocratic-ai-synchron/)
+
+### 2025-11-06
+- The European Commission proposes to pause parts of AI legislation following months of urging from tech giants such as Meta and Alphabet and pressure from the Trump administration. [EU weighs pausing parts of landmark AI act in face of US and big tech pressure, FT reports](https://www.jpost.com/business-and-innovation/article-873080)
+- Amazon stock surged after the company struck a $38 billion cloud computing deal with OpenAI. 
+- Stocks climbed to cap a winning month as strong earnings and easing rates fueled tech stocks. 
+- OpenAI's New Company Structure, AI Companion App Adds Child Safety Rules, and Grokipedia Attempts to Dethrone Wikipedia. 
+- AI is reshaping entry-level roles—how agencies and schools are retooling. [AI is reshaping entry-level roles—how agencies and schools are retooling](https://adage.com/ad-age-video-podcast/insider/aa-ai-skills-required-entry-level-marketing-jobs/)
+- There is still a lot of hype around healthcare AI, but conversations have evolved to focus on practical objectives as health system leaders look to the technology to improve efficiency, reduce costs and lighten the load for clinicians and patients. [Key trends and executive takeaways from HLTH 2025](https://www.fiercehealthcare.com/health-tech/key-trends-and-executive-takeaways-hlth-2025)
+- Brittany Bucicchia began using an A.I. therapy chatbot after dealing with mental health struggles. [How AI therapy chatbots are being used](https://www.nytimes.com/2025/11/06/technology/ai-therapy-chatbots-ash.html)

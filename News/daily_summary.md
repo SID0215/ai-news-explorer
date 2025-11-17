@@ -1,0 +1,7 @@
+# Today News Summary
+
+### 2025-11-17
+- **Japan and Switzerland’s economies contract as US tariffs hit exports; Alphabet shares jump after Warren Buffett reveals stake – as it happened**: Rolling coverage of the latest economic and financial news [Read full story](https://www.theguardian.com/business/live/2025/nov/17/japan-economy-contracts-exports-us-tariffs-trade-war-ftse-stock-markets-business-live-news)
+- **WPP shares leap amid takeover bid speculation**: Advertising group declines to comment on reports of interest from rival Havas and private equity groups Apollo and KKR [Read full story](https://www.theguardian.com/business/2025/nov/17/wpp-shares-takeover-bid-speculation-havas-apollo-kkr)
+- **Asking prices fall as UK housing market hit by budget speculation, Rightmove says**: November drop of 1.8% is biggest for this time of year since 2012, with chancellor’s plans looming [Read full story](https://www.theguardian.com/business/2025/nov/17/asking-prices-fall-as-uk-housing-market-hit-by-budget-speculation-rightmove-says)
+- **Japan tourism and retail stocks slide after row with China over Taiwan**: Tokyo and Beijing are in a dispute over the Japanese prime minister's remarks about Taiwan. [Read full story](https://www.bbc.com/news/articles/c5y9n25r0qyo)

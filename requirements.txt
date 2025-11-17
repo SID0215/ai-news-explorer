@@ -1,0 +1,13 @@
+langchain
+langgraph
+langchain_community
+langchain_core
+langchain_openai
+langchain_groq
+faiss-cpu
+streamlit
+tavily-python
+pydantic
+newsdataapi
+python-dotenv
+feedparser

@@ -1,0 +1,13 @@
+# Today News Summary
+
+### No Date
+- [Wall Street Strategists Say Tech Stock Sell-Off is Short-Term – Tech stocks experienced turbulence as investors rotated out of AI highfliers, but strategists say the earnings bull case remains intact](https://finance.yahoo.com/news/hold-your-ground-wall-street-strategists-say-tech-stock-sell-off-is-a-short-term-blip-as-earnings-bull-case-remains-intact-153023828.html?fr=sycsrp_catchall)
+- [Bank of America Securities Maintains Buy Rating on Taiwan Semiconductor – The company has a price objective of $360.00 and is considered one of the best fundamentally strong stocks to buy](https://finance.yahoo.com/news/bank-america-securities-maintains-buy-044149156.html)
+- [Fintech Stocks Plunge on Credit Risk Concerns – Remitly has little exposure to credit, but its stock fell sharply after its recent earnings report](https://finance.yahoo.com/news/fintech-stocks-sale-one-looks-233200096.html?fr=sycsrp_catchall)
+- [BoFA Maintains Buy Rating on NVIDIA – The company has a price objective of $275 and is considered one of the best fundamentally strong stocks to buy](https://finance.yahoo.com/news/bofa-maintains-buy-rating-nvidia-044147539.html)
+- [Warning Signs Flashing for Wall Street's AI Spending Bubble – Firms such as Blue Owl Capital have raised trillions in investing firepower, but warning signs are flashing](https://www.wsj.com/finance/investing/wall-street-ai-spending-bubble-810d270e)
+- [Bank of America Price Target Raised by Analysts – The consensus analyst price target has risen to $58.94 per share, reflecting confidence in the company's execution and growth prospects](https://finance.yahoo.com/news/catalysts-changing-story-bank-america-141058141.html)
+- [Billionaire Bill Ackman to Unveil Proposal for Fannie Mae and Freddie Mac – The proposal will be introduced on Tuesday, November 18](https://finance.yahoo.com/news/billionaire-bill-ackman-set-unveil-213110089.html?fr=sycsrp_catchall)
+- [Stock Market Rises After Rocky Week – The major gauges rose as major players in the AI space failed to impress Wall Street with their earnings reports](https://finance.yahoo.com/news/live/stock-market-today-dow-sp-500-nasdaq-futures-climb-as-traders-look-toward-nvidia-earnings-jobs-report-011944838.html?fr=sycsrp_catchall)
+- [Stock Market Flashes Rare Signal – The signal has only been seen once before, and history may indicate what could come next](https://finance.yahoo.com/news/stock-market-just-flashed-signal-181500719.html?fr=sycsrp_catchall)
+- [JGB Futures Fall in Early Tokyo Trade – The futures fell, tracking declines in the U.S. Treasury market](https://www.wsj.com/finance/investing/jgb-futures-fall-tracking-declines-in-u-s-treasury-market-c111cb81)
