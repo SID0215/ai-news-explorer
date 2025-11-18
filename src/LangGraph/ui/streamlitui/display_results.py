@@ -233,9 +233,9 @@ def filter_sections_by_selected_date(sections, timeframe: str):
     if tf.startswith("today"):
         start = end = selected
     elif tf.startswith("week"):
-        # Monday–Sunday week
-        start = selected - timedelta(days=selected.weekday())
-        end = start + timedelta(days=6)
+        # Last 6 days plus the selected day (7-day window ending at selected)
+        start = selected - timedelta(days=6)
+        end = selected
     elif tf.startswith("month"):
         start = selected.replace(day=1)
         if selected.month == 12:
@@ -422,9 +422,10 @@ def render_news_sections(sections, news_type: str, timeframe: str):
     selected = _get_selected_date()
     if selected:
         if timeframe.lower().startswith("week"):
-            week_start = selected - timedelta(days=selected.weekday())
-            week_end = week_start + timedelta(days=6)
+            week_start = selected - timedelta(days=6)
+            week_end = selected
             st.caption(f"Week of {week_start.isoformat()} to {week_end.isoformat()}")
+
         elif timeframe.lower().startswith("month"):
             st.caption(selected.strftime("%B %Y"))
         else:
